@@ -30,7 +30,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('booking-accomodation/**/pom.xml') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('booking-reviews/**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
@@ -46,8 +46,8 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ env.DOCKERHUB_USERNAME }}/reviews:latest .
+          docker build -t ${{ env.DOCKERHUB_USERNAME }}/reviews:${{github.run_number}} .
 
 
       - name: Publish Docker Image
-        run: docker push ${{ env.DOCKERHUB_USERNAME }}/reviews:latest
+        run: docker push ${{ env.DOCKERHUB_USERNAME }}/reviews:${{github.run_number}}
