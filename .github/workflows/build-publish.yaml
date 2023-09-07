@@ -51,3 +51,10 @@ jobs:
 
       - name: Publish Docker Image
         run: docker push ${{ env.DOCKERHUB_USERNAME }}/reviews:${{github.run_number}}
+
+
+      - name: Tag Docker Image
+        run: docker tag ${{ env.DOCKERHUB_USERNAME }}/reviews:${{github.run_number}} ${{ env.DOCKERHUB_USERNAME }}/reviews:latest
+
+      - name: Publish Docker Image
+        run: docker push ${{ env.DOCKERHUB_USERNAME }}/reviews:latest
