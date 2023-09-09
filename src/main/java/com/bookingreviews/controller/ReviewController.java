@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor("/api/reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;
