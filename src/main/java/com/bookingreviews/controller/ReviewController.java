@@ -1,12 +1,15 @@
 package com.bookingreviews.controller;
 
 import com.bookingreviews.model.dto.CreateReviewDto;
+import com.bookingreviews.model.dto.ReadReviewDto;
 import com.bookingreviews.model.dto.ReadReviewsDto;
 import com.bookingreviews.model.dto.UpdateReviewDto;
 import com.bookingreviews.model.entity.Review;
 import com.bookingreviews.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/reviews")
@@ -28,6 +31,11 @@ public class ReviewController {
     @GetMapping("/{id}")
     public ReadReviewsDto getForReviewee(@PathVariable String id) {
         return reviewService.getAllForReviewee(id);
+    }
+
+    @GetMapping("/{reviewerId}")
+    public List<ReadReviewDto> getAllReviewsForReviewer(@PathVariable String reviewerId) {
+        return reviewService.getAllReviewsForReviewer(reviewerId);
     }
 
     @DeleteMapping("/{id}")
