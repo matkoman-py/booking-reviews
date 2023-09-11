@@ -33,7 +33,7 @@ public class ReviewController {
         return reviewService.getAllForReviewee(id);
     }
 
-    @GetMapping("/{reviewerId}")
+    @GetMapping("/reviewer/{reviewerId}")
     public List<ReadReviewDto> getAllReviewsForReviewer(@PathVariable String reviewerId) {
         return reviewService.getAllReviewsForReviewer(reviewerId);
     }
