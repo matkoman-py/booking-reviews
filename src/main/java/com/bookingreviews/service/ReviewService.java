@@ -33,7 +33,9 @@ public class ReviewService {
     public Review create(CreateReviewDto reviewDto) {
         if(reviewDto.getRating() < 0 || reviewDto.getRating() > 5)
             throw new OutOfBoundsException("Rating must be between 1 and 5");
-        Review review = ReviewMapper.INSTANCE.toEntity(reviewDto);
+
+        Review review = reviewRepository.findByReviewerIdAndRevieweeId(reviewDto.getReviewerId(), reviewDto.getRevieweeId()).isPresent() ?
+                reviewRepository.findByReviewerIdAndRevieweeId(reviewDto.getReviewerId(), reviewDto.getRevieweeId()).get() : ReviewMapper.INSTANCE.toEntity(reviewDto);
         UserInfoDto reviewerInfo = userProxy.getUser(reviewDto.getReviewerId());
         if(!reviewerInfo.getRole().equals(UserRole.GUEST))
             throw new InvalidRoleException("User of role Host can't leave a review");
