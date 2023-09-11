@@ -5,8 +5,10 @@ import com.bookingreviews.exception.InvalidRoleException;
 import com.bookingreviews.exception.NotFoundException;
 import com.bookingreviews.exception.OutOfBoundsException;
 import com.bookingreviews.mapper.ReviewMapper;
+import com.bookingreviews.messaging.KafkaProducer;
 import com.bookingreviews.model.dto.*;
 import com.bookingreviews.model.entity.Review;
+import com.bookingreviews.model.enums.NotificationType;
 import com.bookingreviews.model.enums.RevieweeType;
 import com.bookingreviews.model.enums.UserRole;
 import com.bookingreviews.proxy.BookingAccomodationProxy;
@@ -25,6 +27,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserProxy userProxy;
     private final BookingAccomodationProxy bookingAccomodationProxy;
+    private final KafkaProducer kafkaProducer;
 
 
     public Review create(CreateReviewDto reviewDto) {
@@ -39,6 +42,26 @@ public class ReviewService {
                 bookingAccomodationProxy.canGuestReviewAccomodation(reviewDto.getReviewerId(), reviewDto.getRevieweeId());
         if(!canReview) throw new NotFoundException("No reservations for this host/accomodation was found");
         review.setReviewedOn(LocalDateTime.now());
+
+        if(reviewDto.getRevieweeType().equals(RevieweeType.HOST)){
+            kafkaProducer.sendMessage(NotificationDTO
+                    .builder()
+                    .message(String.format("You have a new profile review from: %s", reviewDto.getReviewerId()))
+                    .userId(reviewDto.getRevieweeId())
+                    .notificationType(NotificationType.NEW_PROFILE_REVIEW)
+                    .build());
+        }
+        else{
+            AccomodationDTO accomodationDTO = bookingAccomodationProxy.getOneAccommodation(reviewDto.getRevieweeId());
+            kafkaProducer.sendMessage(NotificationDTO
+                    .builder()
+                    .message(String.format("You have a new accommodation review from: %s", reviewDto.getReviewerId()))
+                    .userId(accomodationDTO.getHostId())
+                    .notificationType(NotificationType.NEW_ACCOMODATION_REVIEW)
+                    .build());
+        }
+
+
         return reviewRepository.save(review);
     }
 
