@@ -100,4 +100,7 @@ public class ReviewService {
         reviewRepository.deleteAll(reviews);
     }
 
+    public void delete(String id) {
+        reviewRepository.deleteById(id);
+    }
 }
