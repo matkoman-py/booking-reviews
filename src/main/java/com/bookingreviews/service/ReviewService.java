@@ -105,4 +105,9 @@ public class ReviewService {
     public void delete(String id) {
         reviewRepository.deleteById(id);
     }
+
+    public List<ReadReviewDto> getAllReviewsForReviewer(String reviewerId) {
+        return reviewRepository.findByReviewerId(reviewerId).stream()
+                .map(ReviewMapper.INSTANCE::toDto).toList();
+    }
 }
